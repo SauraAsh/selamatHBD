@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="music-control">
+        <button class="music-btn" id="musicBtn" onclick="toggleMusic()">Music OFF</button>
+    </div>
+
+    <audio id="birthdayMusic" loop>
+        <source src="videoplayback.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="container">
+        <div class="input-section" id="inputSection">
+            <div class="bento-tile tile-header">
+                <div class="tile-tag">CARD?</div>
+                <h1 class="tile-title">Special Card</h1>
+            </div>
+
+            <div class="bento-tile tile-body">
+                <label for="nameInput" class="tile-label">RECIPIENT NAME</label>
+                <input type="text" id="nameInput" placeholder="Type name here..." maxlength="20" autocomplete="off">
+            </div>
+
+            <div class="bento-tile tile-action">
+                <button class="action-btn" onclick="showBirthday()">Open Card</button>
+            </div>
+        </div>
+
+        <div class="birthday-section" id="birthdaySection">
+            <div class="bento-tile tile-header">
+                <div class="tile-tag">BIRTHDAY WISH</div>
+            </div>
+
+            <div class="bento-tile tile-body">
+                <div class="birthday-message">
+                    Happy Birthday,<br>
+                    <span class="user-name" id="displayName"></span>
+                </div>
+                <p class="celebration-text">
+                    Wishing you a calm mind, steady progress, and good health for all the years ahead.
+                </p>
+            </div>
+
+            <div class="bento-tile tile-action">
+                <button class="back-button" onclick="goBack()">Celebrate Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
