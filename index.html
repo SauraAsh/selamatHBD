@@ -1,61 +1,264 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Birthday</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Happy Birthday</title>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Nunito:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1b1340;--bg2:#3a1f6e;--pink:#ff4f9a;--sun:#ffd23f;--mint:#3ee0b5;--sky:#5cb8ff;--ink:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:'Nunito',system-ui,sans-serif;overflow:hidden}
+.stage{position:relative;height:100%;overflow:hidden;background:radial-gradient(ellipse at 50% 90%,var(--bg2),var(--bg) 70%)}
+.disp{font-family:'Bagel Fat One','Arial Rounded MT Bold',system-ui,sans-serif;font-weight:400;margin:0;line-height:1}
+.sc{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;
+text-align:center;padding:1rem;opacity:0;visibility:hidden;transition:opacity .7s,visibility .7s}
+.sc.on{opacity:1;visibility:visible}
+#stars i{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;animation:tw 2.4s ease-in-out infinite alternate}
+@keyframes tw{from{opacity:.15}to{opacity:.9}}
+canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:5}
+.lang{position:absolute;top:12px;right:12px;z-index:6;display:flex;gap:4px;opacity:0;pointer-events:none;transition:opacity .5s}
+.idle .lang{opacity:1;pointer-events:auto}
+.lang button{padding:.4rem .8rem;font-size:.95rem;background:transparent;border-color:rgba(255,255,255,.4)}
+.lang button[aria-pressed=true]{background:var(--sun);border-color:var(--sun);color:#1b1340}
+.ask{font-size:clamp(2rem,8vw,4rem);color:var(--sun)}
+.row{display:flex;gap:8px;margin-top:1.5rem;flex-wrap:wrap;justify-content:center}
+input,button{font:inherit;font-size:1.1rem;border-radius:999px;border:2px solid rgba(255,255,255,.35);background:rgba(27,19,64,.7);color:var(--ink);padding:.7rem 1.2rem}
+input{width:14rem;text-align:center}
+button{background:var(--pink);border-color:var(--pink);cursor:pointer}
+button.alt{background:transparent;border-color:rgba(255,255,255,.5)}
+input:focus-visible,button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.intro{font-size:clamp(1.8rem,7vw,3.6rem);max-width:14em}
+.w{display:inline-block;opacity:0;margin:0 .12em}
+.on .w{animation:rise .8s ease-out forwards;animation-delay:calc(var(--i)*.45s)}
+@keyframes rise{from{opacity:0;transform:translateY(24px) scale(.9)}to{opacity:1;transform:none}}
+.cake{width:min(70vw,340px);max-height:42vh;transform:translateY(60vh)}
+.on .cake{animation:up 1.2s cubic-bezier(.2,1.3,.4,1) forwards}
+@keyframes up{to{transform:none}}
+.fl{opacity:0;transform-box:fill-box;transform-origin:50% 100%}
+.on .fl{animation:light .3s forwards,flick .25s ease-in-out infinite alternate;animation-delay:calc(1.6s + var(--i)*.45s),calc(1.6s + var(--i)*.45s)}
+@keyframes light{to{opacity:1}}
+@keyframes flick{from{transform:scale(1,1) rotate(-3deg)}to{transform:scale(.88,1.12) rotate(3deg)}}
+.on .fl.off{animation:none;opacity:0}
+.sm{opacity:0}
+.sm.off{animation:smoke 1.8s ease-out forwards}
+@keyframes smoke{0%{opacity:.7;transform:translateY(0)}100%{opacity:0;transform:translateY(-40px)}}
+.hit{fill:transparent;cursor:pointer}
+.wish{font-size:clamp(1.6rem,6vw,3rem);color:var(--mint);margin-top:1rem;min-height:1.2em}
+.wish span{display:block;opacity:0}
+.on .wish .a{animation:rise .8s 1s forwards}
+.out .wish .a,.out .hint{display:none}
+.out .wish .b{animation:rise .8s forwards}
+.hint{opacity:0;margin:.9rem 0 0;font-size:1.1rem;color:#d8d0ff;max-width:22em}
+.on .hint{animation:rise .8s 3s forwards}
+.hm{display:none}.mic .hm{display:block}.mic .ht{display:none}
+.meter{width:200px;height:8px;border-radius:99px;background:rgba(255,255,255,.2);margin:.7rem auto 0;overflow:hidden;visibility:hidden}
+.mic .meter{visibility:visible}
+.meter i{display:block;height:100%;width:0;background:var(--mint)}
+.row3{display:block;white-space:nowrap}
+.r1{font-size:clamp(3rem,15vw,9rem);color:var(--sun)}
+.r2{font-size:clamp(2.6rem,12.5vw,7.6rem);color:var(--pink)}
+.r3{font-size:clamp(1.8rem,8vw,4.5rem);color:var(--mint);margin-top:.5rem;opacity:0;max-width:100%;overflow-wrap:anywhere}
+.row3 span{display:inline-block;opacity:0;transform:translateY(-120vh) rotate(-20deg)}
+.on .row3 span{animation:drop .9s cubic-bezier(.3,1.6,.5,1) forwards;animation-delay:calc(var(--i)*.07s + var(--d))}
+.r1{--d:.2s}.r2{--d:.7s}
+.on .r3{animation:rise .8s 2s forwards}
+@keyframes drop{to{opacity:1;transform:none}}
+.l{font-size:clamp(2rem,8vw,4.4rem);opacity:0;position:absolute;max-width:90%}
+.on .l{animation:swap 2.2s ease-in-out forwards;animation-delay:calc(var(--i)*2.2s)}
+@keyframes swap{0%{opacity:0;transform:scale(.8)}20%,75%{opacity:1;transform:none}100%{opacity:0;transform:scale(1.08)}}
+.fin{opacity:0;display:flex;flex-direction:column;align-items:center}
+.on .fin{animation:rise 1s 6.8s forwards}
+.fin .disp{font-size:clamp(2rem,9vw,5rem);color:var(--sun);overflow-wrap:anywhere}
+#bl{position:absolute;inset:0;z-index:1;overflow:hidden;opacity:0;transition:opacity 1s}
+.go #bl{opacity:1}
+.b{position:absolute;bottom:-30vh;left:var(--x);width:var(--s);animation:fly var(--t) ease-in infinite;animation-delay:var(--w)}
+.b svg{width:100%;display:block;animation:sway 3s ease-in-out infinite alternate}
+@keyframes fly{to{transform:translateY(-150vh)}}
+@keyframes sway{from{transform:rotate(-6deg)}to{transform:rotate(6deg)}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-delay:0s!important}}
+</style>
 </head>
 <body>
-    <div class="music-control">
-        <button class="music-btn" id="musicBtn" onclick="toggleMusic()">Music OFF</button>
-    </div>
+<main class="stage idle" id="st">
+<div id="stars" aria-hidden="true"></div>
+<div id="bl" aria-hidden="true"></div>
+<canvas id="c" aria-hidden="true"></canvas>
+<audio id="birthdaySound" src="videoplayback.mp3" preload="auto"></audio>
+<div class="lang" role="group" aria-label="Language">
+  <button data-l="en" aria-pressed="true">EN</button><button data-l="id" aria-pressed="false">ID</button>
+</div>
 
-    <audio id="birthdayMusic" loop>
-        <source src="videoplayback.mp3" type="audio/mpeg">
-    </audio>
+<section class="sc on" id="s0">
+  <h1 class="disp ask" data-k="ask"></h1>
+  <div class="row"><input id="in" maxlength="24" data-ph="ph"><button id="go" data-k="play"></button></div>
+</section>
 
-    <div class="container">
-        <div class="input-section" id="inputSection">
-            <div class="bento-tile tile-header">
-                <div class="tile-tag">CARD?</div>
-                <h1 class="tile-title">Special Card</h1>
-            </div>
+<section class="sc" id="s1"><p class="disp intro" id="intro"></p></section>
 
-            <div class="bento-tile tile-body">
-                <label for="nameInput" class="tile-label">RECIPIENT NAME</label>
-                <input type="text" id="nameInput" placeholder="Type name here..." maxlength="20" autocomplete="off">
-            </div>
+<section class="sc" id="s2">
+  <svg class="cake" viewBox="0 0 240 230" aria-hidden="true">
+    <defs>
+      <clipPath id="k1"><rect x="22" y="146" width="196" height="64" rx="12"/></clipPath>
+      <clipPath id="k2"><rect x="52" y="98" width="136" height="54" rx="12"/></clipPath>
+    </defs>
+    <ellipse cx="120" cy="214" rx="112" ry="12" fill="#fff" fill-opacity=".85"/>
+    <rect x="22" y="146" width="196" height="64" rx="12" fill="#ff4f9a"/>
+    <rect x="52" y="98" width="136" height="54" rx="12" fill="#ffd23f"/>
+    <path clip-path="url(#k1)" d="M10 146v14q12 16 24 0t24 0 24 0 24 0 24 0 24 0 24 0 24 0 24 0 24 0v-14z" fill="#fff"/>
+    <path clip-path="url(#k2)" d="M40 98v14q12 16 24 0t24 0 24 0 24 0 24 0 24 0 24 0 24 0v-14z" fill="#fff"/>
+    <circle cx="60" cy="188" r="5" fill="#3ee0b5"/><circle cx="105" cy="194" r="5" fill="#5cb8ff"/><circle cx="150" cy="188" r="5" fill="#ffd23f"/><circle cx="190" cy="194" r="5" fill="#3ee0b5"/>
+    <rect x="82" y="62" width="10" height="38" rx="3" fill="#5cb8ff"/><rect x="115" y="62" width="10" height="38" rx="3" fill="#3ee0b5"/><rect x="148" y="62" width="10" height="38" rx="3" fill="#ff8a3d"/>
+    <path class="fl" style="--i:0" d="M87 36c8 10 8 18 0 24-8-6-8-14 0-24z" fill="#ffb02e"/>
+    <path class="fl" style="--i:1" d="M120 36c8 10 8 18 0 24-8-6-8-14 0-24z" fill="#ffb02e"/>
+    <path class="fl" style="--i:2" d="M153 36c8 10 8 18 0 24-8-6-8-14 0-24z" fill="#ffb02e"/>
+    <circle class="sm" cx="87" cy="50" r="5" fill="#fff"/><circle class="sm" cx="120" cy="50" r="5" fill="#fff"/><circle class="sm" cx="153" cy="50" r="5" fill="#fff"/>
+    <rect class="hit" data-i="0" x="72" y="28" width="30" height="76"/><rect class="hit" data-i="1" x="105" y="28" width="30" height="76"/><rect class="hit" data-i="2" x="138" y="28" width="30" height="76"/>
+  </svg>
+  <p class="disp wish"><span class="a" data-k="wishA"></span><span class="b" data-k="wishB"></span></p>
+  <p class="hint"><span class="hm" data-k="hintMic"></span><span class="ht" data-k="hintTap"></span></p>
+  <div class="meter" aria-hidden="true"><i id="mt"></i></div>
+</section>
 
-            <div class="bento-tile tile-action">
-                <button class="action-btn" onclick="showBirthday()">Open Card</button>
-            </div>
-        </div>
+<section class="sc" id="s3">
+  <h2 class="disp row3 r1" id="t1"></h2>
+  <div class="disp row3 r2" id="t2" aria-hidden="true"></div>
+  <p class="disp r3" id="nl"></p>
+</section>
 
-        <div class="birthday-section" id="birthdaySection">
-            <div class="bento-tile tile-header">
-                <div class="tile-tag">BIRTHDAY WISH</div>
-            </div>
+<section class="sc" id="s4">
+  <p class="disp l" style="--i:0" data-k="l1"></p>
+  <p class="disp l" style="--i:1;color:var(--pink)" data-k="l2"></p>
+  <p class="disp l" style="--i:2;color:var(--mint)" data-k="l3"></p>
+  <div class="fin">
+    <p class="disp" data-k="fin"></p>
+    <div class="row"><button id="again" data-k="again"></button><button id="chg" class="alt" data-k="chg"></button></div>
+  </div>
+</section>
+</main>
 
-            <div class="bento-tile tile-body">
-                <div class="birthday-message">
-                    Happy Birthday,<br>
-                    <span class="user-name" id="displayName"></span>
-                </div>
-                <p class="celebration-text">
-                    Wishing you a calm mind, steady progress, and good health for all the years ahead.
-                </p>
-            </div>
+<script>
+const $=id=>document.getElementById(id);
+const T={
+en:{ask:"Who's the birthday star?",ph:"Type a name",play:"Play",intro:"Something special is happening today",
+ wishA:"Make a wish, {n}",wishB:"and it's on its way",hintMic:"Blow into your mic to blow out the candles",
+ hintTap:"No mic? Tap the candles to blow them out",h1:"Happy",h2:"Birthday",l1:"More laughs.",l2:"More cake.",
+ l3:"More of everything you love.",fin:"Happy birthday, {n}",again:"Replay",chg:"Change name",who:"you"},
+id:{ask:"Siapa yang berulang tahun?",ph:"Ketik nama",play:"Mulai",intro:"Sesuatu yang spesial terjadi hari ini",
+ wishA:"Buat permohonan, {n}",wishB:"dan sedang dalam perjalanan",hintMic:"Tiup ke mikrofon untuk memadamkan lilin",
+ hintTap:"Tidak ada mikrofon? Ketuk lilinnya untuk meniup",h1:"Selamat",h2:"Ulang Tahun",l1:"Lebih banyak tawa.",l2:"Lebih banyak kue.",
+ l3:"Lebih banyak hal yang kamu suka.",fin:"Selamat ulang tahun, {n}",again:"Ulangi",chg:"Ganti nama",who:"kamu"}};
+const cols=['#ff4f9a','#ffd23f','#3ee0b5','#5cb8ff','#ff8a3d','#b583ff'];
+const qs=new URLSearchParams(location.search);
+let lang=(qs.get('lang')||navigator.language||'en').toLowerCase().startsWith('id')?'id':'en';
+let timers=[],parts=[],rain=0,W,H;
+const cv=$('c'),cx=cv.getContext('2d'),R=()=>devicePixelRatio||1;
+const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const name=()=>$('in').value.trim()||T[lang].who;
 
-            <div class="bento-tile tile-action">
-                <button class="back-button" onclick="goBack()">Celebrate Again</button>
-            </div>
-        </div>
-    </div>
+function words(s){return s.split(' ').map((w,i)=>'<span class="w" style="--i:'+i+'">'+w+'</span>').join(' ');}
+function letters(s){return [...s].map((c,i)=>'<span style="--i:'+i+'">'+(c===' '?'&nbsp;':c)+'</span>').join('');}
+function applyLang(){
+  const d=T[lang],n=name();document.documentElement.lang=lang;
+  document.querySelectorAll('[data-k]').forEach(e=>e.textContent=d[e.dataset.k].replace('{n}',n));
+  $('in').placeholder=d.ph;
+  $('intro').innerHTML=words(d.intro);
+  $('t1').innerHTML=letters(d.h1);$('t1').setAttribute('aria-label',d.h1+' '+d.h2);$('t2').innerHTML=letters(d.h2);
+  $('nl').textContent=n;
+  document.querySelectorAll('.lang button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===lang));
+}
 
-    <script src="script.js"></script>
+function size(){W=cv.width=innerWidth*R();H=cv.height=innerHeight*R();}
+addEventListener('resize',size);size();
+for(let i=0;i<50;i++){const s=document.createElement('i');s.style.cssText='left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;animation-delay:'+Math.random()*2+'s';$('stars').appendChild(s);}
+
+function balloons(){const el=$('bl');el.innerHTML='';
+  for(let i=0;i<10;i++){const c=cols[i%6],d=document.createElement('div');d.className='b';
+    d.style.cssText='--x:'+(2+i*10+Math.random()*4)+'%;--s:'+(46+Math.random()*34)+'px;--t:'+(7+Math.random()*4)+'s;--w:'+(i*.5)+'s';
+    d.innerHTML='<svg viewBox="0 0 60 110"><path d="M30 2C12 2 3 18 5 34c2 17 17 30 25 34 8-4 23-17 25-34C57 18 48 2 30 2z" fill="'+c+'"/><path d="M30 68l-4 8h8z" fill="'+c+'"/><path d="M30 76c-6 10 6 16 0 32" stroke="#fff" stroke-opacity=".6" fill="none" stroke-width="1.5"/><ellipse cx="19" cy="22" rx="5" ry="9" fill="#fff" fill-opacity=".35" transform="rotate(20 19 22)"/></svg>';
+    el.appendChild(d);}}
+function burst(x,y,n){const r=R();for(let i=0;i<n;i++){const a=Math.random()*6.283,v=(6+Math.random()*12)*r;
+  parts.push({x:x*r,y:y*r,vx:Math.cos(a)*v,vy:Math.sin(a)*v-8*r,w:(6+Math.random()*7)*r,h:(3+Math.random()*5)*r,c:cols[i%6],rot:Math.random()*6,vr:(Math.random()-.5)*.4});}}
+function tick(){cx.clearRect(0,0,W,H);const r=R();
+  if(rain>0&&Math.random()<.5){rain--;parts.push({x:Math.random()*W,y:-10,vx:(Math.random()-.5)*2*r,vy:(2+Math.random()*3)*r,w:(6+Math.random()*6)*r,h:(3+Math.random()*4)*r,c:cols[(Math.random()*6)|0],rot:Math.random()*6,vr:(Math.random()-.5)*.3});}
+  parts=parts.filter(p=>p.y<H+30);
+  for(const p of parts){p.vy+=.28*r;p.vx*=.985;p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;
+    cx.save();cx.translate(p.x,p.y);cx.rotate(p.rot);cx.fillStyle=p.c;cx.scale(1,Math.abs(Math.cos(p.rot*1.5))+.2);cx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cx.restore();}
+  requestAnimationFrame(tick);}
+tick();
+
+/* microphone blow detection */
+let mic='none',an,buf,ready=false,left=3,acc=0,base=0.02,lastT=0;
+async function initMic(){
+  if(mic==='ok'||mic==='asking')return;mic='asking';
+  try{
+    const s=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+    const A=new (window.AudioContext||window.webkitAudioContext)();await A.resume();
+    an=A.createAnalyser();an.fftSize=1024;buf=new Float32Array(an.fftSize);A.createMediaStreamSource(s).connect(an);mic='ok';
+  }catch(e){mic='no';}
+  $('s2').classList.toggle('mic',mic==='ok');
+}
+function snuff(i){
+  if(!ready||left<1)return;
+  const f=[...document.querySelectorAll('.fl')],s=[...document.querySelectorAll('.sm')];
+  if(i===undefined||f[i].classList.contains('off'))i=f.findIndex(e=>!e.classList.contains('off'));
+  if(i<0)return;
+  f[i].classList.add('off');s[i].classList.add('off');left--;
+  if(left===0){ready=false;$('mt').style.width='0';celebrate();}
+}
+function listen(t){
+  const dt=Math.min(100,t-lastT);lastT=t;
+  if(ready&&mic==='ok'){
+    an.getFloatTimeDomainData(buf);let q=0;for(const v of buf)q+=v*v;const lvl=Math.sqrt(q/buf.length);
+    const th=Math.max(0.07,base*4);
+    if(lvl<th)base=base*0.97+lvl*0.03;
+    $('mt').style.width=Math.min(100,lvl/th*60)+'%';
+    if(lvl>th)acc+=dt;else acc=Math.max(0,acc-dt*2);
+    if(acc>450){acc=0;snuff();}
+  }
+  requestAnimationFrame(listen);
+}
+requestAnimationFrame(listen);
+document.querySelectorAll('.hit').forEach(h=>h.addEventListener('click',()=>snuff(+h.dataset.i)));
+addEventListener('keydown',e=>{if((e.key===' '||e.key==='Enter')&&$('s2').classList.contains('on')&&ready){e.preventDefault();snuff();}});
+
+/* scenes */
+function show(n){
+  document.querySelectorAll('.sc').forEach((s,i)=>{if(i===n){s.classList.remove('on');void s.offsetWidth;s.classList.add('on');}else s.classList.remove('on');});
+  $('st').classList.toggle('idle',n===0);
+}
+const at=(ms,fn)=>timers.push(setTimeout(fn,ms));
+function reset(){timers.forEach(clearTimeout);timers=[];parts=[];rain=0;ready=false;left=3;acc=0;
+  $('birthdaySound').pause();$('birthdaySound').currentTime=0;
+  $('st').classList.remove('go');$('s2').classList.remove('out');
+  document.querySelectorAll('.fl,.sm').forEach(e=>e.classList.remove('off'));$('mt').style.width='0';}
+function play(){
+  reset();initMic();applyLang();balloons();
+  show(1);
+  at(3800,()=>{$('s2').classList.toggle('mic',mic==='ok');show(2);});
+  at(7000,()=>{ready=true;});
+}
+function celebrate(){
+  $('birthdaySound').play().catch(()=>{});
+  $('s2').classList.add('out');
+  at(2300,()=>{show(3);$('st').classList.add('go');});
+  if(!still){
+    at(3800,()=>burst(innerWidth/2,innerHeight*.4,130));
+    at(4700,()=>{burst(innerWidth*.12,innerHeight*.8,70);burst(innerWidth*.88,innerHeight*.8,70);});
+    at(5300,()=>{rain=300;});}
+  at(8500,()=>show(4));
+  at(15300,()=>$('st').classList.add('idle'));
+}
+$('go').onclick=play;$('again').onclick=play;
+$('chg').onclick=()=>{reset();show(0);$('in').focus();};
+$('in').addEventListener('keydown',e=>{if(e.key==='Enter')play();});
+$('in').addEventListener('input',()=>{document.querySelectorAll('[data-k=fin],[data-k=wishA]').forEach(e=>e.textContent=T[lang][e.dataset.k].replace('{n}',name()));$('nl').textContent=name();});
+document.querySelectorAll('.lang button').forEach(b=>b.onclick=()=>{lang=b.dataset.l;applyLang();});
+if(qs.get('name'))$('in').value=qs.get('name').slice(0,24);
+applyLang();
+</script>
 </body>
 </html>
