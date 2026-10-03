@@ -144,11 +144,11 @@ input:focus-visible,button:focus-visible{outline:3px solid var(--sun);outline-of
 const $=id=>document.getElementById(id);
 const T={
 en:{ask:"Who's the birthday star?",ph:"Type a name",play:"Play",intro:"Something special is happening today",
- wishA:"Make a wish, {n}",wishB:"and it's on its way",hintMic:"Blow into your mic to blow out the candles",
+ wishA:"Make a wish, {n}",wishB:"and it's on its way",hintMic:"Blow into your mic, or tap the candles",
  hintTap:"No mic? Tap the candles to blow them out",h1:"Happy",h2:"Birthday",l1:"More laughs.",l2:"More cake.",
  l3:"More of everything you love.",fin:"Happy birthday, {n}",again:"Replay",chg:"Change name",who:"you"},
 id:{ask:"Siapa yang berulang tahun?",ph:"Ketik nama",play:"Mulai",intro:"Sesuatu yang spesial terjadi hari ini",
- wishA:"Buat permohonan, {n}",wishB:"dan sedang dalam perjalanan",hintMic:"Tiup ke mikrofon untuk memadamkan lilin",
+ wishA:"Buat permohonan, {n}",wishB:"dan sedang dalam perjalanan",hintMic:"Tiup ke mikrofon, atau ketuk lilinnya",
  hintTap:"Tidak ada mikrofon? Ketuk lilinnya untuk meniup",h1:"Selamat",h2:"Ulang Tahun",l1:"Lebih banyak tawa.",l2:"Lebih banyak kue.",
  l3:"Lebih banyak hal yang kamu suka.",fin:"Selamat ulang tahun, {n}",again:"Ulangi",chg:"Ganti nama",who:"kamu"}};
 const cols=['#ff4f9a','#ffd23f','#3ee0b5','#5cb8ff','#ff8a3d','#b583ff'];
@@ -191,14 +191,15 @@ function tick(){cx.clearRect(0,0,W,H);const r=R();
 tick();
 
 /* microphone blow detection */
-let mic='none',an,buf,ready=false,left=3,acc=0,base=0.02,lastT=0;
+let mic='none',A,an,buf,ready=false,left=3,acc=0,base=0.01,sm=0,lastT=0;
 async function initMic(){
   if(mic==='ok'||mic==='asking')return;mic='asking';
   try{
+    A=new (window.AudioContext||window.webkitAudioContext)();A.resume();
     const s=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
-    const A=new (window.AudioContext||window.webkitAudioContext)();await A.resume();
-    an=A.createAnalyser();an.fftSize=1024;buf=new Float32Array(an.fftSize);A.createMediaStreamSource(s).connect(an);mic='ok';
-  }catch(e){mic='no';}
+    an=A.createAnalyser();an.fftSize=1024;an.smoothingTimeConstant=0;buf=new Uint8Array(an.fftSize);
+    A.createMediaStreamSource(s).connect(an);mic='ok';
+  }catch(e){mic='no';console.warn('Mic unavailable:',e);}
   $('s2').classList.toggle('mic',mic==='ok');
 }
 function snuff(i){
@@ -212,12 +213,14 @@ function snuff(i){
 function listen(t){
   const dt=Math.min(100,t-lastT);lastT=t;
   if(ready&&mic==='ok'){
-    an.getFloatTimeDomainData(buf);let q=0;for(const v of buf)q+=v*v;const lvl=Math.sqrt(q/buf.length);
-    const th=Math.max(0.07,base*4);
-    if(lvl<th)base=base*0.97+lvl*0.03;
-    $('mt').style.width=Math.min(100,lvl/th*60)+'%';
-    if(lvl>th)acc+=dt;else acc=Math.max(0,acc-dt*2);
-    if(acc>450){acc=0;snuff();}
+    if(A.state==='suspended')A.resume();
+    an.getByteTimeDomainData(buf);let q=0;for(const v of buf){const x=(v-128)/128;q+=x*x;}
+    sm=sm*0.6+Math.sqrt(q/buf.length)*0.4;
+    const th=Math.max(0.035,base*3.5);
+    if(sm<th)base=base*0.98+sm*0.02;
+    $('mt').style.width=Math.min(100,sm/th*50)+'%';
+    if(sm>th)acc+=dt;else acc=Math.max(0,acc-dt*2);
+    if(acc>300){acc=0;snuff();}
   }
   requestAnimationFrame(listen);
 }
@@ -237,6 +240,7 @@ function reset(){timers.forEach(clearTimeout);timers=[];parts=[];rain=0;ready=fa
   document.querySelectorAll('.fl,.sm').forEach(e=>e.classList.remove('off'));$('mt').style.width='0';}
 function play(){
   reset();initMic();applyLang();balloons();
+  const snd=$('birthdaySound');snd.muted=true;snd.play().then(()=>{snd.pause();snd.currentTime=0;snd.muted=false;}).catch(()=>{snd.muted=false;});
   show(1);
   at(3800,()=>{$('s2').classList.toggle('mic',mic==='ok');show(2);});
   at(7000,()=>{ready=true;});
